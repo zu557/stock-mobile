@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_exception.dart';
+import '../../../core/ui/ui.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -16,7 +17,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isSubmitting = false;
-  bool _obscurePassword = true;
   String? _errorMessage;
 
   @override
@@ -39,78 +39,64 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.inventory_2_outlined, size: 56),
-                  const SizedBox(height: 16),
-                  Text(
+                  Icon(
+                    Icons.inventory_2_outlined,
+                    size: 56,
+                    color: context.colors.primary,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  const AppText(
                     'Sign in to Stock-Flow',
+                    variant: AppTextVariant.headline,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  const SizedBox(height: 28),
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    autofillHints: const [
-                      AutofillHints.username,
-                      AutofillHints.email,
-                    ],
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      final email = value?.trim() ?? '';
-                      if (email.isEmpty || !email.contains('@')) {
-                        return 'Enter a valid email address';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 14),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    autofillHints: const [AutofillHints.password],
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        onPressed: () => setState(
-                          () => _obscurePassword = !_obscurePassword,
+                  const SizedBox(height: AppSpacing.xl),
+                  AutofillGroup(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppTextField(
+                          label: 'Email',
+                          controller: _emailController,
+                          prefixIcon: Icons.email_outlined,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          autofillHints: const [
+                            AutofillHints.username,
+                            AutofillHints.email,
+                          ],
+                          validator: (value) {
+                            final email = value?.trim() ?? '';
+                            if (email.isEmpty || !email.contains('@')) {
+                              return 'Enter a valid email address';
+                            }
+                            return null;
+                          },
                         ),
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                        AppPasswordField(
+                          controller: _passwordController,
+                          validator: (value) => (value == null || value.isEmpty)
+                              ? 'Enter your password'
+                              : null,
+                          onFieldSubmitted: (_) => _submit(),
                         ),
-                      ),
+                      ],
                     ),
-                    validator: (value) => (value == null || value.isEmpty)
-                        ? 'Enter your password'
-                        : null,
-                    onFieldSubmitted: (_) => _submit(),
                   ),
                   if (_errorMessage != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
+                    AppText(
                       _errorMessage!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                      variant: AppTextVariant.secondary,
+                      color: context.colors.error,
                       textAlign: TextAlign.center,
                     ),
+                    const SizedBox(height: AppSpacing.md),
                   ],
-                  const SizedBox(height: 20),
-                  FilledButton(
-                    onPressed: _isSubmitting ? null : _submit,
-                    child: _isSubmitting
-                        ? const SizedBox.square(
-                            dimension: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Sign in'),
+                  AppButton(
+                    label: 'Sign in',
+                    expand: true,
+                    isLoading: _isSubmitting,
+                    onPressed: _submit,
                   ),
                 ],
               ),

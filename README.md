@@ -1,5 +1,7 @@
 # Stock-Flow Mobile
 
+[![Flutter CI](https://github.com/zu557/stock-mobile/actions/workflows/flutter.yml/badge.svg)](https://github.com/zu557/stock-mobile/actions/workflows/flutter.yml)
+
 Flutter mobile and web client for the existing Stock-Flow inventory platform. It uses the Next.js REST API as its backend; the Flutter app does not connect directly to PostgreSQL.
 
 ## 1. Project overview
@@ -112,6 +114,8 @@ flutter test
 ```
 
 Current tests cover a dashboard smoke check, product JSON parsing, and a legacy workout-model calculation. They do not cover every screen or exercise the API against a live backend.
+
+The [Flutter CI workflow](.github/workflows/flutter.yml) runs the formatting check, analyzer, and test suite on pushes and pull requests.
 
 ## 10. Deployment instructions
 
